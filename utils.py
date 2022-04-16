@@ -53,7 +53,7 @@ def get_dataloader(data_dir, batch_size, n_workers, _test = False):
     trainlen = int(0.8 * len(dataset))
     lengths = [trainlen, len(dataset) - trainlen]
     trainset, validset = random_split(dataset, lengths)
-
+    print(f"number of trainset: {len(trainset)}, number of validset: {len(validset)}")
     train_loader = DataLoader(
         trainset,
         batch_size=batch_size,
