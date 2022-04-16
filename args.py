@@ -19,20 +19,21 @@ args = {
     "n_workers": 2,
     
     "lr_warmup": 500,  # warm-up step
-    "lr_factor": 0.07,   # for lr warm-up scale
-    "lr": 1,
+    "lr": 0.07,    # lr * 550**(-0.5) * min(step ** (-0.5), step * lr_warmup ** (-1.5))
     "weight_decay": 1e-5,
     "clip_norm": 10.0,   # clipping gradient norm helps alleviate gradient exploding
+
+    "swa_lr": 5e-3,    # SWA lr
+    "swa_start": 10,   # epoch'th to start SWA
 
     # folder path
     "save_dir": "./checkpoints", 
     "train_dir": "./data",
     "test_dir": "./test",
 
-    # tune 
+    # flag 
     "use_wandb": True,  # record parameter for training
     "train": True,
     "predict": False,
     "use_swa": True,    # implement swa_model to compute average weights
-    "swa_start": 10,
 }
