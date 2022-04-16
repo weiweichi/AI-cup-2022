@@ -41,7 +41,7 @@ class CNN(nn.Module):
             nn.BatchNorm1d(512),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Linear(512, 15),
+            nn.Linear(512, 14),
             # nn.LogSoftmax(dim=1) # for nn.NLLLoss
         )
 
@@ -66,7 +66,7 @@ def get_models(model_name, pretrained):
             nn.Linear(fc_inputs, 512),
             nn.ReLU(),
             nn.Dropout(0.5),
-            nn.Linear(512, 15),
+            nn.Linear(512, 14),
             # nn.LogSoftmax(dim=1) # for nn.NLLLoss
         )
         return model
@@ -83,7 +83,7 @@ def get_models(model_name, pretrained):
         nn.Linear(fc_inputs, 512),
         nn.ReLU(),
         nn.Dropout(0.5),
-        nn.Linear(512, 15), 
+        nn.Linear(512, 14), 
         # nn.LogSoftmax(dim=1) # for nn.NLLLoss
     )
     return model
