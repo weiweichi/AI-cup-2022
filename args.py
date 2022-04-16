@@ -6,7 +6,7 @@ args = {
     "label2name":{
         0: 'banana', 1: 'carrot', 2: 'corn', 3: 'dragonfruit', 4: 'garlic', 5:'guava',\
         6: 'peanut', 7: 'pineapple', 8: 'pumpkin', 9: 'rice', 10: 'soybean',\
-        11: 'sugarcane', 12: 'tomato', 13: 'bareland', 14: 'inundated'
+        11: 'sugarcane', 12: 'tomato', 13: 'bareland'#, 14: 'inundated'
     },
 
     # model type and use pretrained
@@ -14,7 +14,7 @@ args = {
     "pretrained": True,
 
     # hyperparameters
-    "batch_size": 32, # 64 for CNN, 32 for others 
+    "batch_size": 32, # 64 for CNN, 32 for others, becuz cache bomb...
     "n_epoch": 25,   
     "n_workers": 2,
     
