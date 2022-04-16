@@ -35,7 +35,7 @@ def train():
 
     best_acc = 0.0
 
-    for epoch in range(args["n_epoch"]):
+    for epoch in range(1, args["n_epoch"]+1):
 
         # ---------- Training ----------
         model.train()
