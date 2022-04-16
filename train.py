@@ -30,7 +30,7 @@ def train():
 
     if args['use_swa']:
         swa_model = optim.swa_utils.AveragedModel(model) # something like ensemble 
-        swa_scheduler = optim.swa_utils.SWALR(optimizer, swa_lr=0.001, anneal_epochs=10)
+        swa_scheduler = optim.swa_utils.SWALR(optimizer, swa_lr=args["swa_lr"])
         swa_flag = False # start to use swa_model
 
     best_acc = 0.0
@@ -184,7 +184,7 @@ def get_rate(step_num, warmup_step):
     return 550**(-0.5) * min(step_num ** (-0.5), step_num * warmup_step ** (-1.5))
 
 def get_exp_lr_with_warmup(step):
-    return 1e-10 if step == 0 else args["lr_factor"] * get_rate(step, args["lr_warmup"])
+    return 1e-10 if step == 0 else get_rate(step, args["lr_warmup"])
 
 if __name__ == '__main__':
     if args["use_wandb"]:
