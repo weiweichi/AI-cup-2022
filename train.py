@@ -30,7 +30,7 @@ def train():
 
     if args['use_swa']:
         swa_model = optim.swa_utils.AveragedModel(model) # something like ensemble 
-        swa_scheduler = optim.swa_utils.SWALR(optimizer, swa_lr=0.01)
+        swa_scheduler = optim.swa_utils.SWALR(optimizer, swa_lr=0.001, anneal_epochs=10)
         swa_flag = False # start to use swa_model
 
     best_acc = 0.0
@@ -77,6 +77,8 @@ def train():
             swa_scheduler.step()
             swa_model.update_parameters(model)
 
+            swa_model.eval()
+
         train_loss = sum(train_loss) / len(train_loss)
         train_acc = sum(train_accs) / len(train_accs)
     
@@ -94,9 +96,12 @@ def train():
         valid_accs = []
 
         for imgs, labels in tqdm(valid_loader):
-
-            with torch.no_grad():
-                logits = model(imgs.to(device))
+            if swa_flag:
+                with torch.no_grad():
+                    logits = swa_model(imgs.to(device))
+            else:
+                with torch.no_grad():
+                    logits = model(imgs.to(device))
             
             loss = criterion(logits, labels.to(device))
 
@@ -111,11 +116,15 @@ def train():
 
         if args["use_wandb"]:
             wandb.log({
-                "valid/acc": valid_acc
+                "valid/acc": valid_acc,
+                "epoch": epoch
             })
             
         if valid_acc > best_acc:
-            torch.save(model.state_dict(), "{}/{}_best.ckpt".format(args["save_dir"], args["model_name"])) 
+            if swa_flag:
+                torch.save(swa_model.state_dict(), "{}/{}_swa.ckpt".format(args["save_dir"], args["model_name"]))
+            else:
+                torch.save(model.state_dict(), "{}/{}_best.ckpt".format(args["save_dir"], args["model_name"])) 
             best_acc = valid_acc
             print("[ Valid: {:02d}/{:02d} ] loss = {:.5f}, acc = {:.5f} -> best".format(
                 epoch,
