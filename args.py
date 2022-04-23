@@ -1,7 +1,7 @@
 args = {
     "dir_name":[
         "banana", "carrot", 'corn', 'dragonfruit', 'garlic', 'guava', 'peanut',\
-        'pineapple', 'pumpkin', 'rice', 'soybean', 'sugarcane', 'tomato', 'bareland', 'inundated'
+        'pineapple', 'pumpkin', 'rice', 'soybean', 'sugarcane', 'tomato', 'bareland'#, 'inundated'
     ],
     "label2name":{
         0: 'banana', 1: 'carrot', 2: 'corn', 3: 'dragonfruit', 4: 'garlic', 5:'guava',\
@@ -9,31 +9,34 @@ args = {
         11: 'sugarcane', 12: 'tomato', 13: 'bareland'#, 14: 'inundated'
     },
 
-    # model type and use pretrained
-    "model_name": "densenet169", # CNN, Res18, Res34, densenet169, densenet121 and densenet201
-    "pretrained": True,
+    # model type
+    "model_name": "densenet169", # CNN, Res18, Res34, Res50, wide_res, densenet169, densenet121 and densenet201
+    "pretrained": True,  # using pretrained on ImageNet
 
     # hyperparameters
-    "batch_size": 32, # 64 for CNN, 32 for others, becuz cache bomb...
-    "n_epoch": 25,   
-    "n_workers": 2,
-    
-    "lr_warmup": 500,  # warm-up step
-    "lr": 0.07,    # lr * 550**(-0.5) * min(step ** (-0.5), step * lr_warmup ** (-1.5))
-    "weight_decay": 1e-5,
-    "clip_norm": 10.0,   # clipping gradient norm helps alleviate gradient exploding
-
+    "batch_size": 32, # 32 for wide_res, Res50 and densenet*, 64 for other, becuz cache boom... BTW, my GPU is 1080ti (10GB)
+    "n_workers": 4,
+    "n_epoch": 40,
+    "swa_start": 8,   # number of epoch to start SWA 
     "swa_lr": 5e-3,    # SWA lr
-    "swa_start": 10,   # epoch'th to start SWA
+    
+    "lr_warmup": 1000,  # warm-up step
+    "lr": 0.022,    # lr * min(step ** (-0.5), step * lr_warmup ** (-1.5))
+    "weight_decay": 1e-2,
+    "clip_norm": 10,   # clipping gradient norm helps alleviate gradient exploding
 
     # folder path
     "save_dir": "./checkpoints", 
-    "train_dir": "./data",
-    "test_dir": "./test",
+    "train_dir": "./data",  
+    "test_dir": "./test",   
 
     # flag 
-    "use_wandb": True,  # record parameter for training
+    "use_wandb": False,  # record hyperparameters and acc @ wandb.ai  link: https://wandb.ai/weiweichi/Ai%20cup-2022?workspace=user-weiweichi
     "train": True,
     "predict": False,
     "use_swa": True,    # implement swa_model to compute average weights
+    "has_valid": False,  # if True, data will be divided to two parts, one is training data another is validation data.
+
+    # predict
+    "models_name": ["densenet169", "Res50", "Res34"]   # predict by fusion, see models.py for more detailed
 }
