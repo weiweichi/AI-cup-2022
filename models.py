@@ -6,7 +6,7 @@ class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
         self.cnn = nn.Sequential(
-            nn.Conv2d(3, 32, 11),
+            nn.Conv2d(3, 32, 7),
             nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2, 2, 0),
@@ -16,33 +16,32 @@ class CNN(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(2, 2, 0),
 
-            nn.Conv2d(64, 128, 7), 
+            nn.Conv2d(64, 128, 5), 
             nn.BatchNorm2d(128),
             nn.ReLU(),
             nn.MaxPool2d(2, 2, 0),
 
-            nn.Conv2d(128, 256, 7), 
+            nn.Conv2d(128, 256, 5), 
             nn.BatchNorm2d(256),
             nn.ReLU(),
             nn.MaxPool2d(2, 2, 0),
 
-            nn.Conv2d(256, 512, 5), 
+            nn.Conv2d(256, 512, 3), 
             nn.BatchNorm2d(512),
             nn.ReLU(),
             nn.MaxPool2d(2, 2, 0),
             
-            nn.Conv2d(512, 512, 5), 
-            nn.BatchNorm2d(512),
+            nn.Conv2d(512, 1024, 3), 
+            nn.BatchNorm2d(1024),
             nn.ReLU(),
             nn.MaxPool2d(2, 2, 0),
         )
         self.fc = nn.Sequential(
-            nn.Linear(512*3*3, 512),
+            nn.Linear(1024, 512),
             nn.BatchNorm1d(512),
             nn.ReLU(),
             nn.Dropout(),
             nn.Linear(512, 14),
-            # nn.LogSoftmax(dim=1) # for nn.NLLLoss
         )
 
     def forward(self, x):
@@ -51,13 +50,26 @@ class CNN(nn.Module):
         return self.fc(out)
 
 def get_models(model_name, pretrained):
+    # pretrained model path
+    model_path = f"checkpoints/{model_name}/ckpt_best.ckpt"
     model = None
     if model_name == "CNN":
-        return CNN()
+        model = CNN()
+        if pretrained:
+            try:
+                model.load_state_dict(torch.load(model_path))
+                print("pretrained model is loaded!")
+            except:
+                print(f"pretrained model doesn't exist! model path: {model_path}")
+        return model
     elif model_name == "Res18":
-        model = models.resnet18(pretrained=pretrained)
+        model = models.resnet18(pretrained=True)
     elif model_name == "Res34":
-        model = models.resnet34(pretrained=pretrained)
+        model = models.resnet34(pretrained=True)
+    elif model_name == "Res50":
+        model = models.resnet50(pretrained=True)
+    elif model_name == "wide_res":
+        model = models.wide_resnet50_2(pretrained=True)
 
     if model != None:
         fc_inputs = model.fc.in_features
@@ -67,16 +79,21 @@ def get_models(model_name, pretrained):
             nn.ReLU(),
             nn.Dropout(0.5),
             nn.Linear(512, 14),
-            # nn.LogSoftmax(dim=1) # for nn.NLLLoss
         )
+        if pretrained:
+            try:
+                model.load_state_dict(torch.load(model_path))
+                print("pretrained model is loaded!")
+            except:
+                print("pretrained model doesn't exist!")
         return model
     
-    if model_name == "densenet169": # 1687MiB
-        model = models.densenet169(pretrained=pretrained)
-    elif model_name == "densenet121": # 1519MiB
-        model = models.densenet121(pretrained=pretrained)
+    if model_name == "densenet169":
+        model = models.densenet169(pretrained=True)
+    elif model_name == "densenet121":
+        model = models.densenet121(pretrained=True)
     elif model_name == "densenet201": 
-        model = models.densenet201(pretrained=pretrained)
+        model = models.densenet201(pretrained=True)
         
     fc_inputs = model.classifier.in_features
     model.classifier = nn.Sequential(
@@ -84,6 +101,11 @@ def get_models(model_name, pretrained):
         nn.ReLU(),
         nn.Dropout(0.5),
         nn.Linear(512, 14), 
-        # nn.LogSoftmax(dim=1) # for nn.NLLLoss
     )
+    if pretrained:
+        try:
+            model.load_state_dict(torch.load(model_path))
+            print("pretrained model is loaded!")
+        except:
+            print("pretrained model doesn't exist!")
     return model
