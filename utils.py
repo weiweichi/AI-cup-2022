@@ -21,7 +21,7 @@ test_tfm = transforms.Compose([
 train_tfm = transforms.Compose([
     # Resize the image into a fixed shape
     transforms.RandomHorizontalFlip(),
-    transforms.RandomAffine(degrees=0, shear=0.3),
+    transforms.RandomAffine(degrees=0, translate=(0.2, 0.2)),
     transforms.Resize((256, 256)),
     transforms.ToTensor(),
     transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
@@ -61,7 +61,7 @@ def get_dataloader(folders, batch_size, n_workers, _test = False):
     # only create trainset
     if not args['has_valid']:
         dataset = myDataset(files_path, train_tfm)
-        return DataLoader(dataset, batch_size=batch_size, num_workers=n_workers, pin_memory=True), None
+        return DataLoader(dataset, batch_size=batch_size, num_workers=n_workers, pin_memory=True, shuffle=True), None
     
     # Split dataset into training dataset and validation dataset
     trainlen = int(0.8 * len(files_path))
@@ -136,7 +136,8 @@ def train_one_epoch(model, train_loader, criterion, optimizer, device, scheduler
             train_loss,
             train_acc
         ))
-
+    
+    torch.save(model.state_dict(), "{}/{}/ckpt_{}.ckpt".format(args["save_dir"], args["model_name"], epoch)) 
     return train_loss, train_acc
 
 def evaluate(model, data_loader, criterion, device, epoch, best_acc):
@@ -161,7 +162,6 @@ def evaluate(model, data_loader, criterion, device, epoch, best_acc):
     valid_acc = sum(valid_accs) / len(valid_accs)
 
     # -------- print and save ---------
-    torch.save(model.state_dict(), "{}/{}/ckpt_{}.ckpt".format(args["save_dir"], args["model_name"], epoch)) 
     if valid_acc > best_acc:
         torch.save(model.state_dict(), "{}/{}/ckpt_best.ckpt".format(args["save_dir"], args["model_name"])) 
         best_acc = valid_acc
