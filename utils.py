@@ -49,18 +49,15 @@ class myDataset(Dataset):
 
         im = Image.open(fname)
         im = self.transform(im)
-<<<<<<< HEAD
-        croptype = (fname.split("/")[-2]) # as training label
-        label = croptype2label[croptype]
 
+        # croptype = (fname.split("/")[-2]) # as training label
+        # label = croptype2label[croptype]
 
-            
-=======
         if self._test:
             label = fname.split("/")[-1] # as name of data
         else:
             label = int(fname.split("/")[-1].split("_")[0]) # as training label
->>>>>>> 391cd9ca6e0dce06c33c4d2772351cb850b1fccc
+
 
         return im, label
 
