@@ -3,6 +3,12 @@ from torch.utils.data.dataset import Dataset
 from PIL import Image
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split
+import numpy as np
+croptype2label = {
+         'banana':0,  'carrot' : 1, 'corn' : 2,  'dragonfruit':3,  'garlic':4, 'guava':5,\
+        'peanut':6,  'pineapple':7, 'pumpkin':8,  'rice':9,  'soybean':10,\
+         'sugarcane':11,  'tomato':12,  'bareland':13, 'inundated':14
+    }
 
 test_tfm = transforms.Compose([
     transforms.Resize((256, 256)),
@@ -33,12 +39,14 @@ class myDataset(Dataset):
   
     def __getitem__(self, idx):
         fname = self.files[idx]
+
         im = Image.open(fname)
         im = self.transform(im)
-        try:
-            label = int(fname.split("/")[-1].split("_")[0]) # as training label
-        except:
-            label = fname.split("/")[-1].split(".")[0] # as files' name
+        croptype = (fname.split("/")[-2]) # as training label
+        label = croptype2label[croptype]
+
+
+            
 
         return im, label
 
