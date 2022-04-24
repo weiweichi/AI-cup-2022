@@ -72,7 +72,7 @@ if __name__ == '__main__':
             try:
                 optim.swa_utils.update_bn(train_loader, swa_model, device=device)
             except:
-                print("can't not batch norm...")
+                print("can't not update bn...")
                 
             if args['has_valid']:
                 valid_acc, valid_loss, best_acc = utils.evaluate(swa_model, valid_loader, criterion, device, epoch, best_acc)
