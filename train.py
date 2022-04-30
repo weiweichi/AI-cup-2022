@@ -77,14 +77,14 @@ if __name__ == '__main__':
             if args['has_valid']:
                 valid_acc, valid_loss, best_acc = utils.evaluate(swa_model, valid_loader, criterion, device, epoch, best_acc)
                 print(f"[ SWA valid ] loss = {valid_loss:.5f}, acc = {valid_acc:.5f}")
+                if args['use_wandb']:
+                    wandb.log({
+                        "swa_acc": valid_acc,
+                        "swa_loss": valid_loss,
+                    })
 
             torch.save(swa_model.state_dict(), "{}/{}/swa.ckpt".format(args["save_dir"], args["model_name"]))
             print('Saving SWA model as {}/{}/swa.ckpt'.format(args["save_dir"], args["model_name"]))
-            if args['use_wandb']:
-                wandb.log({
-                    "swa_acc": valid_acc,
-                    "swa_loss": valid_loss,
-                })
             
         print("Finish training!")
 
