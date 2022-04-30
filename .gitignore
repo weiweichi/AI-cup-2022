@@ -1,4 +1,4 @@
 *.zip
-data/*.JPG
+data/*
 checkpoints/*
 wandb/*
