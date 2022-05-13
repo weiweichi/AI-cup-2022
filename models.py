@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torchvision import models
+from args import args
 
 class CNN(nn.Module):
     def __init__(self):
@@ -51,7 +52,7 @@ class CNN(nn.Module):
 
 def get_models(model_name, pretrained):
     # pretrained model path
-    model_path = f"checkpoints/{model_name}/ckpt_best.ckpt"
+    model_path ="{}/{}/ckpt_best.ckpt".format(args["save_dir"], model_name)
     model = None
     if model_name == "CNN":
         model = CNN()
@@ -61,6 +62,11 @@ def get_models(model_name, pretrained):
                 print("pretrained model is loaded!")
             except:
                 print(f"pretrained model doesn't exist! model path: {model_path}")
+            if args['use_swa']:
+                try:
+                    model.load_state_dict(torch.load("{}/{}/swa.ckpt".format(args["save_dir"], model_name)))
+                except:
+                    pass
         return model
     elif model_name == "Res18":
         model = models.resnet18(pretrained=True)
@@ -86,6 +92,11 @@ def get_models(model_name, pretrained):
                 print("pretrained model is loaded!")
             except:
                 print("pretrained model doesn't exist!")
+            if args['use_swa']:
+                try:
+                    model.load_state_dict(torch.load("{}/{}/swa.ckpt".format(args["save_dir"], model_name)))
+                except:
+                    pass
         return model
     
     if model_name == "densenet169":
@@ -108,4 +119,9 @@ def get_models(model_name, pretrained):
             print("pretrained model is loaded!")
         except:
             print("pretrained model doesn't exist!")
+        if args['use_swa']:
+            try:
+                model.load_state_dict(torch.load("{}/{}/swa.ckpt".format(args["save_dir"], model_name)))
+            except:
+                pass
     return model
