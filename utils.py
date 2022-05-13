@@ -239,24 +239,25 @@ def evaluate(model, data_loader, criterion, device, epoch, best_acc):
         ))
     return valid_acc, valid_loss, best_acc
 
-def predict_by_fusion(models_name: list):
+def predict_by_fusion():
+    models_name = args['models_name']
     if len(models_name) == 0:
         print("You don't choose any model!\nChoose the model you wanna use to predict!")
         raise ValueError
     
     print("loading test data...")
-    folder = ["./test"]
-    test_loader = get_dataloader(data_dir=folder, batch_size=16, n_workers=args["n_workers"], _test = True)
+    folders = [os.path.join('test', f'test_{i}') for i in '0123456789abcdef']
+    test_loader = get_dataloader(folders=folders, batch_size=16, n_workers=args["n_workers"], _test = True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    print("loading model...")
+    print("loading model with", *args['models_name'], '...')
     model_list = []
     for name in models_name:
         model = models.get_models(model_name=name, pretrained=True)
         model_list.append(model.eval())
     
-    print('predicting...')
+    print('predicting ...')
     pred = []
     with torch.no_grad():
         for imgs, files_name in tqdm(test_loader):
@@ -277,8 +278,8 @@ def predict_by_fusion(models_name: list):
                 
     print("saving prediction...")
     label2name = args['label2name']
-    with open('prediction_{}.csv'.format(args['model_name']), 'w') as f:
-        # f.write('Id,Class\n')
+    with open('prediction.csv'.format(args['model_name']), 'w') as f:
+        f.write('image_filename,label\n')
         for name, type in tqdm(pred):
             f.write('{},{}\n'.format(name, label2name[int(type)]))
-    print("Finish predicting! save prediction as prediction_{}.csv".format(args['model_name']))
+    print("Finish predicting! save prediction as prediction.csv")
