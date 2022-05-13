@@ -10,9 +10,6 @@ import models
 from args import args
 
 if __name__ == '__main__':
-    if args["use_wandb"]:
-        import wandb
-        wandb.init(project='Ai cup-2022', config=args, name=args['model_name'])
     
     myseed = 10942178  # set a random seed for reproducibility
     torch.backends.cudnn.deterministic = True
@@ -23,6 +20,9 @@ if __name__ == '__main__':
         torch.cuda.manual_seed_all(myseed)
     
     if args['train']:
+        if args["use_wandb"]:
+            import wandb
+            wandb.init(project='Ai cup-2022', config=args, name=args['model_name'])
         # create checkpoints folder
         if not os.path.isdir(args["save_dir"]):
             os.mkdir(args["save_dir"])
@@ -89,6 +89,5 @@ if __name__ == '__main__':
         print("Finish training!")
 
     if args['predict']:
-        models_name = args['models_name']
-        utils.predict_by_fusion(models_name=models_name)
+        utils.predict_by_fusion()
         print("Finish predicting!")
