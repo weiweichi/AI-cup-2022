@@ -10,16 +10,6 @@ from torch import nn
 from torch.utils.data.dataset import Dataset
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split
-<<<<<<< HEAD
-=======
-import numpy as np
-croptype2label = {
-         'banana':0,  'carrot' : 1, 'corn' : 2,  'dragonfruit':3,  'garlic':4, 'guava':5,\
-        'peanut':6,  'pineapple':7, 'pumpkin':8,  'rice':9,  'soybean':10,\
-         'sugarcane':11,  'tomato':12,  'bareland':13, 'inundated':14
-    }
-
->>>>>>> 860c69954af8feabfc1fb0e088a298b753d1abea
 from args import args
 import models
 
@@ -51,18 +41,12 @@ class myDataset(Dataset):
   
     def __getitem__(self, idx):
         fname = self.files[idx]
-
         im = Image.open(fname)
         im = self.transform(im)
-
-        # croptype = (fname.split("/")[-2]) # as training label
-        # label = croptype2label[croptype]
-
         if self._test:
             label = fname.split("/")[-1] # as name of data
         else:
             label = int(fname.split("/")[-1].split("_")[0]) # as training label
-
 
         return im, label
     
