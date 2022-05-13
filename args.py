@@ -31,12 +31,12 @@ args = {
     "test_dir": "./test",   
 
     # flag 
-    "use_wandb": True,  # record hyperparameters and acc @ wandb.ai  link: https://wandb.ai/weiweichi/Ai%20cup-2022?workspace=user-weiweichi
+    "use_wandb": False,  # record hyperparameters and acc @ wandb.ai  link: https://wandb.ai/weiweichi/Ai%20cup-2022?workspace=user-weiweichi
     "train": True,
-    "predict": False,
+    "predict": True,
     "use_swa": True,    # implement swa_model to compute average weights
     "has_valid": False,  # if True, data will be divided to two parts, one is training data another is validation data.
 
     # predict
-    "models_name": ["densenet169", "Res50", "Res34"]   # predict by fusion, see models.py for more detailed
+    "models_list": ["densenet169", "Res50", "Res34"]   # predict by fusion, see models.py for more detailed
 }
