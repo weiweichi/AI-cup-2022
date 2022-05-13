@@ -240,8 +240,8 @@ def evaluate(model, data_loader, criterion, device, epoch, best_acc):
     return valid_acc, valid_loss, best_acc
 
 def predict_by_fusion():
-    models_name = args['models_name']
-    if len(models_name) == 0:
+    models_list = args['models_list']
+    if len(models_list) == 0:
         print("You don't choose any model!\nChoose the model you wanna use to predict!")
         raise ValueError
     
@@ -251,9 +251,9 @@ def predict_by_fusion():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    print("loading model with", *args['models_name'], '...')
+    print("loading model with", *models_list, '...')
     model_list = []
-    for name in models_name:
+    for name in models_list:
         model = models.get_models(model_name=name, pretrained=True)
         model_list.append(model.eval())
     
