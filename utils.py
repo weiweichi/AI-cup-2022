@@ -1,14 +1,15 @@
 import os, glob
+from typing import Callable
 from PIL import Image
 from tqdm.auto import tqdm
-
+import pandas as pd
+import torchvision
 import wandb
 import torch
 from torch import nn
 from torch.utils.data.dataset import Dataset
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, random_split
-
 from args import args
 import models
 
@@ -48,6 +49,11 @@ class myDataset(Dataset):
             label = int(fname.split("/")[-1].split("_")[0]) # as training label
 
         return im, label
+    
+    # for ImbalancedDatasetSampler
+    def get_labels(self):
+        labels = [fname.split("/")[-1] for fname in self.files]
+        return labels
 
 def get_dataloader(folders, batch_size, n_workers, _test = False):
     """Generate dataloader"""
@@ -72,7 +78,7 @@ def get_dataloader(folders, batch_size, n_workers, _test = False):
     train_loader = DataLoader(
         trainset,
         batch_size=batch_size,
-        shuffle=True,
+        sampler=ImbalancedDatasetSampler(trainset),
         num_workers=n_workers,
         pin_memory=True,
     )
@@ -83,6 +89,59 @@ def get_dataloader(folders, batch_size, n_workers, _test = False):
         pin_memory=True,
     )
     return train_loader, valid_loader
+
+# https://github.com/ufoym/imbalanced-dataset-sampler
+class ImbalancedDatasetSampler(torch.utils.data.sampler.Sampler):
+    """Samples elements randomly from a given list of indices for imbalanced dataset
+    Arguments:
+        indices: a list of indices
+        num_samples: number of samples to draw
+        callback_get_label: a callback-like function which takes two arguments - dataset and index
+    """
+
+    def __init__(self, dataset, indices: list = None, num_samples: int = None, callback_get_label: Callable = None):
+        # if indices is not provided, all elements in the dataset will be considered
+        self.indices = list(range(len(dataset))) if indices is None else indices
+
+        # define custom callback
+        self.callback_get_label = callback_get_label
+
+        # if num_samples is not provided, draw `len(indices)` samples in each iteration
+        self.num_samples = len(self.indices) if num_samples is None else num_samples
+
+        # distribution of classes in the dataset
+        df = pd.DataFrame()
+        df["label"] = self._get_labels(dataset)
+        df.index = self.indices
+        df = df.sort_index()
+
+        label_to_count = df["label"].value_counts()
+
+        weights = 1.0 / label_to_count[df["label"]]
+
+        self.weights = torch.DoubleTensor(weights.to_list())
+
+    def _get_labels(self, dataset):
+        if self.callback_get_label:
+            return self.callback_get_label(dataset)
+        elif isinstance(dataset, torchvision.datasets.MNIST):
+            return dataset.train_labels.tolist()
+        elif isinstance(dataset, torchvision.datasets.ImageFolder):
+            return [x[1] for x in dataset.imgs]
+        elif isinstance(dataset, torchvision.datasets.DatasetFolder):
+            return dataset.samples[:][1]
+        elif isinstance(dataset, torch.utils.data.Subset):
+            return dataset.dataset.imgs[:][1]
+        elif isinstance(dataset, torch.utils.data.Dataset):
+            return dataset.get_labels()
+        else:
+            raise NotImplementedError
+
+    def __iter__(self):
+        return (self.indices[i] for i in torch.multinomial(self.weights, self.num_samples, replacement=True))
+
+    def __len__(self):
+        return self.num_samples
 
 def get_rate(step_num):
     return min(step_num ** (-0.5), step_num * args["lr_warmup"] ** (-1.5))
