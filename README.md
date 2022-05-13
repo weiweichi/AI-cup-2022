@@ -21,4 +21,4 @@
 |**pretrained** |True  |  -   |True       |
 
 
-Reference: [ResNet](https://arxiv.org/abs/1512.03385), [DenseNet](https://arxiv.org/abs/1608.06993), [SWA](https://arxiv.org/abs/1803.05407)
+Reference: [ResNet](https://arxiv.org/abs/1512.03385), [DenseNet](https://arxiv.org/abs/1608.06993), [SWA](https://arxiv.org/abs/1803.05407), [ImbalancedDatasetSampler](https://github.com/ufoym/imbalanced-dataset-sampler)
