@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision import models
 from args import args
-
+import coatnet
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
@@ -54,6 +54,16 @@ def get_models(model_name, pretrained):
     # pretrained model path
     model_path ="{}/{}/ckpt_best.ckpt".format(args["save_dir"], model_name)
     model = None
+    if model_name == 'coatnet':
+        model = coatnet.coatnet_hx()
+        if pretrained:
+            try:
+                model.load_state_dict(torch.load(model_path))
+                print(f"pretrained {model_name} model is loaded!")
+            except:
+                print(f"pretrained model doesn't exist! model path: {model_path}")
+        return model
+
     if model_name == "CNN":
         model = CNN()
         if pretrained:
