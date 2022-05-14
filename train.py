@@ -40,6 +40,8 @@ if __name__ == '__main__':
         optimizer = optim.AdamW(model.parameters(), lr = args["lr"], weight_decay=args['weight_decay'])
         scheduler = LambdaLR(optimizer, utils.get_exp_lr_with_warmup)
 
+        swa_model = None
+        swa_scheduler = None
         if args['use_swa']:
             swa_model = optim.swa_utils.AveragedModel(model) # something like ensemble 
             swa_scheduler = optim.swa_utils.SWALR(optimizer, swa_lr=args["swa_lr"], anneal_epochs=5)
