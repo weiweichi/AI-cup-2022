@@ -240,10 +240,10 @@ def evaluate(model, data_loader, criterion, device, epoch, best_acc):
     return valid_acc, valid_loss, best_acc
 
 def predict_by_fusion():
-    models_list = args['models_list']
-    if len(models_list) == 0:
+    _models_list = args['models_list']
+    if len(_models_list) == 0:
         print("You don't choose any model!\nChoose the model you wanna use to predict!")
-        raise ValueError
+        raise OSError
     
     print("loading test data...")
     folders = [os.path.join('test', f'test_{i}') for i in '0123456789abcdef']
@@ -251,11 +251,12 @@ def predict_by_fusion():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    print("loading model with", *models_list, '...')
+    print("loading model with", *_models_list, '...')
     model_list = []
-    for name in models_list:
+    for name in _models_list:
         model = models.get_models(model_name=name, pretrained=True)
         model_list.append(model.eval())
+        print("-----------------------")
     
     print('predicting ...')
     pred = []
