@@ -59,16 +59,18 @@ def get_models(model_name, pretrained):
         if pretrained:
             try:
                 model.load_state_dict(torch.load(model_path))
-                print("pretrained model is loaded!")
+                print(f"pretrained {model_name} model is loaded!")
             except:
                 print(f"pretrained model doesn't exist! model path: {model_path}")
             if args['use_swa']:
                 try:
-                    model.load_state_dict(torch.load("{}/{}/swa.ckpt".format(args["save_dir"], model_name)))
+                    swa_model = torch.optim.swa_utils.AveragedModel(model)
+                    swa_model.load_state_dict(torch.load("{}/{}/swa.ckpt".format(args["save_dir"], model_name)))
+                    print(f"loading SWA model!")
                 except:
-                    pass
+                    print("can't load SWA model")
         return model
-    elif model_name == "Res18":
+    if model_name == "Res18":
         model = models.resnet18(pretrained=True)
     elif model_name == "Res34":
         model = models.resnet34(pretrained=True)
@@ -89,14 +91,16 @@ def get_models(model_name, pretrained):
         if pretrained:
             try:
                 model.load_state_dict(torch.load(model_path))
-                print("pretrained model is loaded!")
+                print(f"pretrained {model_name} model is loaded!")
             except:
-                print("pretrained model doesn't exist!")
+                print(f"pretrained model doesn't exist! model path: {model_path}")
             if args['use_swa']:
                 try:
-                    model.load_state_dict(torch.load("{}/{}/swa.ckpt".format(args["save_dir"], model_name)))
+                    swa_model = torch.optim.swa_utils.AveragedModel(model)
+                    swa_model.load_state_dict(torch.load("{}/{}/swa.ckpt".format(args["save_dir"], model_name)))
+                    print(f"loading SWA model!")
                 except:
-                    pass
+                    print("can't load SWA model")
         return model
     
     if model_name == "densenet169":
@@ -116,12 +120,14 @@ def get_models(model_name, pretrained):
     if pretrained:
         try:
             model.load_state_dict(torch.load(model_path))
-            print("pretrained model is loaded!")
+            print(f"pretrained {model_name} model is loaded!")
         except:
-            print("pretrained model doesn't exist!")
+            print(f"pretrained model doesn't exist! model path: {model_path}")
         if args['use_swa']:
             try:
-                model.load_state_dict(torch.load("{}/{}/swa.ckpt".format(args["save_dir"], model_name)))
+                swa_model = torch.optim.swa_utils.AveragedModel(model)
+                swa_model.load_state_dict(torch.load("{}/{}/swa.ckpt".format(args["save_dir"], model_name)))
+                print(f"loading SWA model!")
             except:
-                pass
+                print("can't load SWA model")
     return model
