@@ -1,6 +1,7 @@
 import os, glob
 from typing import Callable
 from PIL import Image
+from sqlalchemy import false
 from tqdm.auto import tqdm
 import pandas as pd
 import torchvision
@@ -254,10 +255,10 @@ def predict_by_fusion():
     print("loading model with", *_models_list, '...')
     model_list = []
     for name in _models_list:
-        model = models.get_models(model_name=name, pretrained=True)
+        model = models.get_models(model_name=name, pretrained=False)
         model_list.append(model.eval())
         print("-----------------------")
-    
+    print(f'model num: {len(model_list)}')
     print('predicting ...')
     pred = []
     with torch.no_grad():
