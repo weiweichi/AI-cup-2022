@@ -11,14 +11,14 @@
 *   Then, run `train.py` by settings in `args.py`.
 *   You can set your hyperparameters in `args.py`.
 ## Settings
-|model          |Res34 |CNN   |densenet169|Res50  |
-|:-------------:|:----:|:----:|:---------:|:-----:|
-|**epoch**      |8+32  |      |8+32       |
-|**batch_size** |64    |64    |32         |32     |
-|**lr**         |0.0025|0.0025|0.003      |
-|**lr_warmup**  |500   |500   |1000       |
-|**swa_lr**     |3e-3  |3e-3  |5e-3       |
-|**pretrained** |True  |  -   |True       |
+|     model      | Res34  |  CNN   | densenet169 | Res50  | coatnet |
+| :------------: | :----: | :----: | :---------: | :----: | :-----: |
+|   **epoch**    | 10+32  |        |    10+32    | 10+32  |  10+32  |
+| **batch_size** |   64   |   64   |     32      |   32   |   32    |
+|     **lr**     | 0.0025 | 0.0025 |   0.0025    | 0.0025 | 0.0025  |
+| **lr_warmup**  |  500   |  500   |     500     |  500   |   500   |
+|   **swa_lr**   |  5e-3  |  5e-3  |    5e-3     |  5e-3  |  5e-3   |
+| **pretrained** |  True  |   -    |    True     |  True  |    -    |
 
 
 Reference: [ResNet](https://arxiv.org/abs/1512.03385), [DenseNet](https://arxiv.org/abs/1608.06993), [SWA](https://arxiv.org/abs/1803.05407), [ImbalancedDatasetSampler](https://github.com/ufoym/imbalanced-dataset-sampler)
