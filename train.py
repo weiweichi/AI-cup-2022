@@ -48,7 +48,7 @@ if __name__ == '__main__':
         swa_flag = False # When to start to use swa_model
 
         best_acc = 0.0
-        for epoch in range(1, args["n_epoch"]+1):
+        for epoch in range(9, args["n_epoch"]+1):
 
             if args['use_swa']:
                 swa_flag = epoch >= args['swa_start']
