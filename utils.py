@@ -1,7 +1,6 @@
 import os, glob
 from typing import Callable
 from PIL import Image
-from sqlalchemy import false
 from tqdm.auto import tqdm
 import pandas as pd
 import torchvision
@@ -15,7 +14,7 @@ from args import args
 import models
 
 test_tfm = transforms.Compose([
-    transforms.Resize((256, 256)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
 ])
@@ -24,7 +23,7 @@ train_tfm = transforms.Compose([
     # Resize the image into a fixed shape
     transforms.RandomHorizontalFlip(),
     transforms.RandomAffine(degrees=0, translate=(0.2, 0.2)),
-    transforms.Resize((256, 256)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
 ])
